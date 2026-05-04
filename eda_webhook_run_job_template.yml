@@ -1,0 +1,21 @@
+---
+# EDA rulebook that runs a job template on every webhook event.
+#
+# Source section is overridden by the event stream mapping when
+# the activation is created with an event stream binding.
+#
+# The job template and organization can be customized via extra_vars.
+
+- name: EDA Webhook Job Template Runner
+  hosts: all
+  sources:
+    - ansible.eda.generic:
+        payload:
+          - message: placeholder
+  rules:
+    - name: Run job template on webhook event
+      condition: event.seq is defined
+      action:
+        run_job_template:
+          name: "{{ job_template_name | default('Demo Job Template') }}"
+          organization: "{{ organization_name | default('Default') }}"
